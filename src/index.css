@@ -1,0 +1,39 @@
+/* Reset mínimo e seguro */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Garante layout full size sem interferir em libs */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Fonte padrão neutra (Ant pode sobrescrever internamente) */
+body {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* Remove sublinhado padrão, sem mexer em cores */
+a {
+  text-decoration: none;
+}
+
+/* Não estilizar botões globalmente (Ant controla) */
+button {
+  font-family: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
