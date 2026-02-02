@@ -2,11 +2,8 @@ import { Card } from 'antd'
 import { Grid } from '../components/Grid'
 import { PageButton } from '../components/PageButton'
 import { Row } from '../components/Row'
-import { useState } from 'react'
 import type { ICycle } from '../interfaces/ICycle'
-
-
-
+import { CardTopicCycle } from './CardTopicCycle'
 
 type CardCycleProps = {
     cycle: ICycle
@@ -15,7 +12,6 @@ type CardCycleProps = {
 }
 
 export function CardCycle(props: CardCycleProps) {
-    const [expand, setExpand] = useState(false)
     return <Card style={{ width: '100%', background: '#FFF', marginBottom: 10 }}>
         <Row>
             <Grid cols="8 8 8 8">
@@ -36,71 +32,8 @@ export function CardCycle(props: CardCycleProps) {
                 {props.cycle.statusInfo}
             </Grid>
             <Grid cols="12 12 12 12" >
-                {props.cycle.topics.map((item, i) =>
-                    <Card key={i} style={{ background: item.rgb, color: '#FFF' }}
-                        styles={{
-                            body: {
-                                padding: 10,
-                            },
-                        }}
-                    >
-                        <Row>
-                            <Grid cols="8 8 8 8">
-                                <h6>{item.description}</h6>
-                            </Grid>
-                            <Grid cols="4 4 4 4" style={{ textAlign: 'right' }}>
-                                {item.elapsedTime}
-                            </Grid>
-                            {expand ?
-                                <>
-                                    <Grid cols="12 12 12 12" style={{ textAlign: 'right' }}>
-                                        {item.score}
-                                    </Grid>
-                                    <Grid cols="12 12 12 12">
-                                        <Card style={{ background: '#fbfbfb', marginInline: 10, marginBlock: 5 }}
-                                            styles={{
-                                                body: {
-                                                    padding: 5,
-                                                },
-                                            }}
-                                        >
-                                            <Grid cols="12 12 12 12">
-                                                <span className='pe-1'>Assunto:</span>{item.subject || '-'}
-                                            </Grid>
-                                            <Grid cols="12 12 12 12">
-                                                <span className='pe-1'>Anotações:</span>{item.annotation || ' - '}
-                                            </Grid>
-                                        </Card>
-                                    </Grid>
-                                    <Grid cols="12 12 12 12">
-                                        <PageButton
-                                            style={{ background: '#00000050' }}
-                                            className="text-light"
-                                            type='text'
-                                            icon="chevron-up"
-                                            text="Recolher"
-                                            onClick={() => setExpand(false)}
-                                        />
-                                    </Grid>
-                                </>
-                                : <>
-                                    <Grid cols="6 6 6 6">
-                                        <PageButton
-                                            style={{ background: '#00000050' }}
-                                            className="text-light"
-                                            type='text'
-                                            icon="chevron-down"
-                                            text="Expandir"
-                                            onClick={() => setExpand(true)}
-                                        />
-                                    </Grid>
-                                    <Grid cols="6 6 6 6" style={{ textAlign: 'right' }}>
-                                        {item.score}
-                                    </Grid>
-                                </>}
+                {props.cycle.topics.map((topic, i) => <CardTopicCycle key={i} topic={topic} />
 
-                        </Row>
-                    </Card>
                 )}
             </Grid>
         </Row>

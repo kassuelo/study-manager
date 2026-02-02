@@ -53,7 +53,7 @@ export function StudyMap() {
             </Card>
             <Card style={{ boxShadow: '0px 0px 3px 1px #DDF', background: '#ebedf5', margin: 0, padding: 0 }}>
                 <Row>
-                    <Grid cols="12 12 12 12" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+                    <Grid cols="12 12 12 12" style={{ maxHeight: window.innerWidth < 768 ? 300: '70vh', overflowY: 'auto' }}>
                         {listaMapaEstudos.map((item, i) =>
                             <Card key={i} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
                             >

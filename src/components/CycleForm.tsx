@@ -1,12 +1,14 @@
-import { Form, Input, Button, Card } from 'antd'
+import { Form, Input, Button, Card, Select } from 'antd'
 import { useEffect, useState, type MouseEventHandler } from 'react'
-import { INCIDENCE_LABELS, KNOWLEDGE_LABELS, TopicForm } from './TopicForm'
+import { KNOWLEDGE_LABELS, TopicForm } from './TopicForm'
 import { Row } from './Row'
 import { Grid } from './Grid'
 import { PageButton } from './PageButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { ITopicCycle } from '../interfaces/ITopicCycle'
 import type { ICycle } from '../interfaces/ICycle'
+import { useStudyMap } from '../hooks/useStudyMap'
+import type { IDiscipline } from '../interfaces/IDiscipline'
 
 const DEFAULT_FORM = {
     description: '',
@@ -21,6 +23,10 @@ type DisciplineFormProps = {
 }
 
 export function CycleForm(props: DisciplineFormProps) {
+    const { listaMapaEstudos } = useStudyMap()
+    const [disciplines, setDisciplines] = useState<IDiscipline[]>([])
+    const [selectedDisciplineId, setSelectedDisciplineId] = useState<number | null>(null)
+
     const [showTopicForm, setShowTopicForm] = useState(false)
     const [selectedTopic, setSelectedTopic] = useState<ITopicCycle | null>(null)
     const [form] = Form.useForm()
@@ -33,13 +39,28 @@ export function CycleForm(props: DisciplineFormProps) {
         // Preenche os campos do formulário
         form.setFieldsValue({
             description: props.selectedCycle.description,
-            statusInfo: props.selectedCycle.statusInfo,
+            annotation: props.selectedCycle.annotation,
         })
 
         // Preenche os tópicos
-        setTopics(props.selectedCycle.topics || [])
+        const listaTopicosRecebida = props.selectedCycle.topics || []
+        setTopics(listaTopicosRecebida)
+        const disciplinasValidas = listaMapaEstudos.filter(discipline => listaTopicosRecebida.find(t => t.subject === discipline.description))
+        const disciplinasComTopicosFiltrados = disciplinasValidas.map(discipline => ({ ...discipline, topics: discipline.topics.filter(dt => listaTopicosRecebida.find(t => t.description === dt.description)) }))
+        setDisciplines(disciplinasComTopicosFiltrados)
 
-    }, [props.selectedCycle, form])
+    }, [props.selectedCycle, listaMapaEstudos, form])
+
+    useEffect(() => {
+        const novaListaTopicos = disciplines.reduce<ITopicCycle[]>(
+            (acc, current) => {
+                return [...acc, ...(current.topics.map(t => ({ subject: current.description, ...t })) || [])]
+            },
+            []
+        )
+
+        setTopics(novaListaTopicos)
+    }, [disciplines])
 
 
     const handleAddTopic = (topic: ITopicCycle) => {
@@ -47,7 +68,7 @@ export function CycleForm(props: DisciplineFormProps) {
     }
 
     const handleRemoveTopic = (topic: ITopicCycle) => {
-        setTopics(prev => [...prev.filter(t => JSON.stringify(topic) !== JSON.stringify(t))])
+        setTopics(prev => [...prev.filter(t => topic.id != t.id)])
     }
 
     type EditTopicProps = {
@@ -61,6 +82,7 @@ export function CycleForm(props: DisciplineFormProps) {
     }
 
     const handleSubmit = (values: any) => {
+
         const payload = {
             ...values,
             topics,
@@ -100,51 +122,119 @@ export function CycleForm(props: DisciplineFormProps) {
                             <Input />
                         </Form.Item>
 
-                        <Form.Item label="Situação" name="statusInfo">
+
+                        <Form.Item label="Anotação" name="annotation">
                             <Input />
                         </Form.Item>
-                        <Grid cols="12 12 12 12" style={{ textAlign: 'right', paddingBottom: 10 }}>
-                            <PageButton onClick={() => setShowTopicForm(true)} icon="plus" text="Incluir Tópico" />
-                        </Grid>
-                        {/* Lista de tópicos adicionados */}
-                        {topics.map((topic, index) => (
-                            <Card key={index} size="small" style={{ marginBottom: 8 }}>
-                                <Row>
-                                    <Grid cols="10 10 10 10" >
-                                        <strong>{topic.description}</strong>
-                                        <div>{topic.elapsedTime}</div>
-                                        <div>{topic.score}</div>
 
+                        <Form.Item label="Disciplinas">
+                            <Select
+                                placeholder="Selecione uma disciplina"
+                                value={selectedDisciplineId}
+                                onSelect={(id) => {
+                                    const discipline = listaMapaEstudos.find(d => d.id === id)
+                                    if (!discipline) return
+
+                                    setDisciplines(prev => [...prev, discipline])
+
+                                    // LIMPA O SELECT
+                                    setSelectedDisciplineId(null)
+                                }}
+                                options={listaMapaEstudos
+                                    .filter(d => !disciplines.some(sel => sel.id === d.id))
+                                    .map(d => ({
+                                        label: d.description,
+                                        value: d.id,
+                                    }))
+                                }
+                            />
+                        </Form.Item>
+
+
+                        {disciplines.map((disciplina, i) =>
+                            <Card key={i} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
+                            >
+                                <Row>
+                                    <Grid cols="8 8 8 8">
+                                        <h5>{disciplina.description}</h5>
                                     </Grid>
-                                    <Grid cols="2 2 2 2" style={{ display: 'flex', justifyContent: 'flex-end', gap: 4, paddingBottom: 14 }}>
-                                        <PageButton type="primary"
-                                            style={{ background: '#ffb950' }}
-                                            onClick={() => {
-                                                console.log(topic)
-                                                setSelectedTopic(topic)
-                                                setShowTopicForm(true)
-                                            }} icon="edit" text="" />
+                                    <Grid cols="4 4 4 4" style={{ display: 'flex', justifyContent: 'flex-end', gap: 4, paddingBottom: 14 }}>
                                         <PageButton type="primary" danger
                                             onClick={() => {
-                                                if (!window.confirm('Deseja realmente excluir o tópico da disciplina?')) return;
-                                                handleRemoveTopic(topic)
+                                                if (!window.confirm('Deseja realmente excluir a disciplina?')) return;
+                                                setDisciplines(prev => prev.filter(d => d.id !== disciplina.id))
                                             }} icon="trash" text="" />
                                     </Grid>
-                                    <Grid cols="12 12 12 12" >
-                                        <div className='p-3' style={{ background: '#ededed', marginBlock: 10, borderRadius: 10 }} >
-                                            <div className='pe-1'>Assunto:</div>{topic.subject || '-'}
-                                            <div className='pe-1'>Anotações:</div>{topic.annotation || ' - '}
-                                            {/* <div className='pe-1'>Info:</div>{topic.reviewInfo || '-'} */}
-                                        </div>
+                                </Row>
+                                <Row>
+                                    <Grid cols="8 8 8 8">
+                                        {disciplina.annotation}
                                     </Grid>
+                                    <Grid cols="4 4 4 4" style={{ textAlign: 'right' }}>
+                                        {disciplina.statusInfo}
+                                    </Grid>
+                                    {disciplina.topics.map((topico, j) =>
+                                        <Card key={j} style={{ background: topico.rgb, color: '#FFF' }}
+                                            styles={{
+                                                body: {
+                                                    padding: 10,
+                                                },
+                                            }}
+                                        >
+                                            <Grid cols="12 12 12 12">
+                                                <Row>
+                                                    <Grid cols="11 11 11 11">
+                                                        <Row>
+                                                            <Grid cols="8 8 8 8">
+                                                                <h6>{topico.description}</h6>
+                                                                {topico.knowledgeScore && topico.knowledgeScore >= 0 ?
+                                                                    <>
+                                                                        <span className='pe-2'>
+                                                                            {KNOWLEDGE_LABELS[topico.knowledgeScore].label}
+                                                                        </span>
+                                                                        <span>
+                                                                            {KNOWLEDGE_LABELS[topico.knowledgeScore].icon}
+                                                                        </span>
+                                                                    </>
+                                                                    :
+                                                                    null}
+                                                            </Grid>
+                                                            <Grid cols="4 4 4 4" style={{ textAlign: 'right' }}>
+                                                                {topico.elapsedTime}
+                                                            </Grid>
+                                                            <Grid cols="12 12 12 12" style={{ textAlign: 'right' }}>
+                                                                {topico.score}
+                                                            </Grid>
+                                                        </Row>
+
+                                                    </Grid>
+                                                    <Grid cols="1 1 1 1" className='d-flex justify-content-end align-items-center'>
+                                                        <Row>
+                                                            <PageButton type="primary" danger
+                                                                onClick={() => {
+                                                                    if (!window.confirm('Deseja realmente excluir o tópico?')) return;
+                                                                    setDisciplines(prev => prev.map(d => {
+                                                                        if (JSON.stringify(d) !== JSON.stringify(disciplina)) return d;
+                                                                        const novaListaTopicos = d.topics.filter(t => JSON.stringify(t) !== JSON.stringify(topico));
+                                                                        return { ...d, topics: novaListaTopicos }
+
+                                                                    }))
+                                                                }} icon="trash" text="" />
+                                                        </Row>
+                                                    </Grid>
+                                                </Row>
+                                            </Grid>
+                                        </Card>
+                                    )}
                                 </Row>
                             </Card>
-                        ))}
+                        )}
+
 
                         <Row>
                             <Grid cols="6 6 6 6" >
                                 <Button color="green" variant="solid" type="primary" icon={<FontAwesomeIcon icon={'check'} />} htmlType="submit" block>
-                                    Salvar Revisão
+                                    Salvar Ciclo
                                 </Button>
                             </Grid>
                             <Grid cols="6 6 6 6" >

@@ -6,7 +6,6 @@ import { CardCycle } from './CardCycle';
 import { CardReview } from './CardReview';
 import { useStudyCycle } from '../hooks/useStudyCycle';
 import { useState } from 'react';
-import type { IReview } from '../interfaces/IReview';
 import type { ICycle } from '../interfaces/ICycle';
 import { CycleForm } from './CycleForm';
 
@@ -55,13 +54,11 @@ export function StudyCycle() {
         </Card>
         <Card style={{ boxShadow: '0px 0px 3px 1px #DDF', background: '#ebedf5', margin: 0, padding: 0 }}>
             <Row>
-                <Grid cols="12 12 12 12" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+                <Grid cols="12 12 12 12" style={{ maxHeight: window.innerWidth < 768 ? 300 : '70vh', overflowY: 'auto' }}>
                     {[...listaRevisaoEstudos].map((review, i) =>
                         <CardReview
                             key={i}
                             review={review} />)}
-                </Grid>
-                <Grid cols="12 12 12 12" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
                     {[...listaCicloEstudos].map((cycle, i) =>
                         <CardCycle
                             key={i}
