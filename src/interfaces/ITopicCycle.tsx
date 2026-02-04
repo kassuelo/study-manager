@@ -1,7 +1,7 @@
 
 export interface ITopicCycle {
   id?: number
-  order: number
+  order?: number
   rgb: string
   description: string
   elapsedTime: string

@@ -4,9 +4,14 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './config/fontawesome'
 import './index.css'
 import App from './App.tsx'
+import { ConfigProvider } from 'antd'
+import ptBR from 'antd/locale/pt_BR'
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ConfigProvider locale={ptBR}>
+      <App />
+    </ConfigProvider>
   </StrictMode>,
 )

@@ -1,39 +1,39 @@
-import { Form, Input, Button, Card, Select } from 'antd'
+import { Form, Input, Button, Card, Select, Modal } from 'antd'
 import { useEffect, useState, type MouseEventHandler } from 'react'
 import { KNOWLEDGE_LABELS, TopicForm } from './TopicForm'
 import { Row } from './Row'
 import { Grid } from './Grid'
 import { PageButton } from './PageButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import type { ITopicCycle } from '../interfaces/ITopicCycle'
 import type { ICycle } from '../interfaces/ICycle'
 import { useStudyMap } from '../hooks/useStudyMap'
 import type { IDiscipline } from '../interfaces/IDiscipline'
+import type { ITopicDiscipline } from '../interfaces/ITopicDiscipline'
 
 const DEFAULT_FORM = {
     description: '',
     statusInfo: '',
-    topics: [] as ITopicCycle[],
+    topics: [] as ITopicDiscipline[],
 }
 
-type DisciplineFormProps = {
+type CycleFormProps = {
+    visible: boolean
     selectedCycle: ICycle | null
     onSubmit: Function
     onCancel: MouseEventHandler<HTMLButtonElement>
 }
 
-export function CycleForm(props: DisciplineFormProps) {
+export function CycleForm(props: CycleFormProps) {
     const { listaMapaEstudos } = useStudyMap()
     const [disciplines, setDisciplines] = useState<IDiscipline[]>([])
     const [selectedDisciplineId, setSelectedDisciplineId] = useState<number | null>(null)
 
     const [showTopicForm, setShowTopicForm] = useState(false)
-    const [selectedTopic, setSelectedTopic] = useState<ITopicCycle | null>(null)
+    const [selectedTopic, setSelectedTopic] = useState<ITopicDiscipline | null>(null)
     const [form] = Form.useForm()
-    const [topics, setTopics] = useState<ITopicCycle[]>([])
+    const [topics, setTopics] = useState<ITopicDiscipline[]>([])
 
     useEffect(() => {
-        console.log(props.selectedCycle)
         if (!props.selectedCycle) return
 
         // Preenche os campos do formulário
@@ -52,9 +52,16 @@ export function CycleForm(props: DisciplineFormProps) {
     }, [props.selectedCycle, listaMapaEstudos, form])
 
     useEffect(() => {
-        const novaListaTopicos = disciplines.reduce<ITopicCycle[]>(
+        const novaListaTopicos = disciplines.reduce<ITopicDiscipline[]>(
             (acc, current) => {
-                return [...acc, ...(current.topics.map(t => ({ subject: current.description, ...t })) || [])]
+                const topics = current.topics ?? []
+
+                const mappedTopics: ITopicDiscipline[] = topics.map(t => ({
+                    ...t,
+                    subject: current.description,
+                }))
+
+                return [...acc, ...mappedTopics]
             },
             []
         )
@@ -63,17 +70,17 @@ export function CycleForm(props: DisciplineFormProps) {
     }, [disciplines])
 
 
-    const handleAddTopic = (topic: ITopicCycle) => {
+    const handleAddTopic = (topic: ITopicDiscipline) => {
         setTopics(prev => [...prev, topic])
     }
 
-    const handleRemoveTopic = (topic: ITopicCycle) => {
+    const handleRemoveTopic = (topic: ITopicDiscipline) => {
         setTopics(prev => [...prev.filter(t => topic.id != t.id)])
     }
 
     type EditTopicProps = {
-        oldTopic: ITopicCycle
-        newTopic: ITopicCycle
+        oldTopic: ITopicDiscipline
+        newTopic: ITopicDiscipline
     }
 
     const handleEditTopic = ({ oldTopic, newTopic }: EditTopicProps) => {
@@ -94,7 +101,15 @@ export function CycleForm(props: DisciplineFormProps) {
     }
 
     return (
-        <>
+        <Modal
+            title={props.selectedCycle ? "Editar Ciclo" : "Incluir Ciclo"}
+            open={props.visible}
+            onCancel={props.onCancel}
+            footer={null} // deixa os botões dentro do form
+            destroyOnHidden
+            width={'min(800px,80vw)'}
+        >
+
             {showTopicForm ?
                 <Card title="Adicionar tópico" style={{ marginBottom: 16 }}>
                     <TopicForm
@@ -246,6 +261,6 @@ export function CycleForm(props: DisciplineFormProps) {
                     </Form>
                 </Row>
             }
-        </>
+        </Modal>
     )
 }

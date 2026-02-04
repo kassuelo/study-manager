@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { IconProp } from '@fortawesome/fontawesome-svg-core'
-import type { MouseEventHandler } from 'react'
+import type { MouseEventHandler, ReactElement } from 'react'
 
 
 type ButtonProps = {
@@ -9,8 +9,8 @@ type ButtonProps = {
      * Texto exibido no botão
      * Exemplo: "Incluir", "Novo", "Adicionar"
      */
-    text: string
-
+    text?: string
+    element?: ReactElement
     /**
      * Tipo do botão do Ant Design
      * Valores aceitos:
@@ -49,7 +49,9 @@ export function PageButton(props: ButtonProps) {
             className={props.className}
             type={props.type || "default"}
             icon={<FontAwesomeIcon icon={props.icon} />}
+            iconPlacement="end"
         >
+            {props.element}
             {props.text}
         </Button>
     )

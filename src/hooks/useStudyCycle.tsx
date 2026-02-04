@@ -25,7 +25,7 @@ export function useStudyCycle() {
     useEffect(() => {
         async function buscarDados() {
             try {
-                const response = await fetch(`${BASE_URL}/mock-api/study-cycle`);
+                const response = await fetch(`${BASE_URL}/study-cycle`);
                 const data: StudyCycleResponse = await response.json();
                 console.log(data)
                 setListaRevisaoEstudos(data.reviews);

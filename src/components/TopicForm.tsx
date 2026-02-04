@@ -1,14 +1,14 @@
 import { Form, Input, Button, Radio, Space, Checkbox } from 'antd'
-import type { ITopicForm } from '../interfaces/ITopicDiscipline'
 import { Row } from './Row'
 import { Grid } from './Grid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBook, faBookOpen, faAward } from '@fortawesome/free-solid-svg-icons'
 import { useEffect } from 'react'
+import type { ITopicDiscipline } from '../interfaces/ITopicDiscipline'
 
 type TopicFormProps = {
-    selectedTopic: ITopicForm | null
-    onSubmit: (topic: ITopicForm) => void
+    selectedTopic: ITopicDiscipline | null
+    onSubmit: (topic: ITopicDiscipline) => void
     onCancel: () => void
 }
 const INCIDENCE_COLORS = [
@@ -19,7 +19,7 @@ const INCIDENCE_COLORS = [
     '#BF0001',
 ]
 
-const DEFAULT_TOPIC: ITopicForm = {
+const DEFAULT_TOPIC = {
     rgb: INCIDENCE_COLORS[0],
     description: '',
     incidenceScore: 0,

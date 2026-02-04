@@ -19,6 +19,7 @@
     "@fortawesome/react-fontawesome": "^3.1.1",
     "antd": "^6.2.2",
     "bootstrap": "^5.3.8",
+    "dayjs": "^1.11.19",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

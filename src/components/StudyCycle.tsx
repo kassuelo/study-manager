@@ -8,40 +8,55 @@ import { useStudyCycle } from '../hooks/useStudyCycle';
 import { useState } from 'react';
 import type { ICycle } from '../interfaces/ICycle';
 import { CycleForm } from './CycleForm';
+import { StudyRecordForm } from './StudyRecordForm';
 
 export function StudyCycle() {
-    // const [openReviewForm, setOpenReviewForm] = useState(false)
     const [openCycleForm, setOpenCycleForm] = useState(false)
-    // const [selectedRevisao, setSelectedRevisao] = useState<IReview | null>(null)
+    const [openStudyRecordForm, setOpenStudyRecordForm] = useState(false)
     const [selectedCycle, setSelectedCycle] = useState<ICycle | null>(null)
+    const [selectedStudyRecord, setSelectedStudyRecord] = useState<any | null>(null)
     const { listaRevisaoEstudos, listaCicloEstudos, editarRevisao, excluirRevisao, adicionarCiclo, excluirCiclo, editarCiclo } = useStudyCycle();
 
+
+    function handleCancelCycleForm() {
+        setOpenCycleForm(false);
+        setSelectedCycle(null)
+    }
+
+    function handleSubmitCycleForm(ciclo: ICycle) {
+        if (selectedCycle) {
+            editarCiclo({ oldCycle: selectedCycle, newCycle: ciclo })
+        } else {
+            adicionarCiclo(ciclo)
+        }
+        setOpenCycleForm(false)
+        setSelectedCycle(null)
+    }
+
+    function handleCancelStudyRecordForm() {
+        setOpenStudyRecordForm(false)
+        setSelectedStudyRecord(null)
+    }
+
+    function handleSubmitStudyRecordForm(studyRecord: any) {
+        window.alert(`ADICIONANDO REGISTRO DE ESTUDO\n ${JSON.stringify(studyRecord, null, 4)}\n \n deveria estar vindo o id_subject e id_topic pra poder enviar, vinculando o registro de estudo a disciplina e tópico`)
+        setOpenStudyRecordForm(false)
+        setSelectedStudyRecord(null)
+    }
+
     return <>
-        {/* Modal do formulário */}
-        <Modal
-            title={selectedCycle ? "Editar Ciclo" : "Incluir Ciclo"}
-            open={openCycleForm}
-            onCancel={() => {
-                setOpenCycleForm(false);
-                setSelectedCycle(null)
-            }}
-            footer={null} // deixa os botões dentro do form
-            destroyOnHidden
-            width={'min(800px,80vw)'}
-        >
-            <CycleForm
-                selectedCycle={selectedCycle}
-                onCancel={() => setOpenCycleForm(false)}
-                onSubmit={(ciclo: ICycle) => {
-                    if (selectedCycle) {
-                        editarCiclo({ oldCycle: selectedCycle, newCycle: ciclo })
-                    } else {
-                        adicionarCiclo(ciclo)
-                    }
-                    setOpenCycleForm(false)
-                }
-                } />
-        </Modal>
+        <CycleForm
+            visible={openCycleForm}
+            selectedCycle={selectedCycle}
+            onCancel={handleCancelCycleForm}
+            onSubmit={handleSubmitCycleForm}
+        />
+        <StudyRecordForm
+            visible={openStudyRecordForm}
+            selectedStudyRecord={selectedStudyRecord}
+            onCancel={handleCancelStudyRecordForm}
+            onSubmit={handleSubmitStudyRecordForm}
+        />
         <Card className='pe-3 mb-2' style={{ color: '#FFF', fontWeight: 'bold', background: '#64b2ff' }}>
             <Row>
                 <Grid cols="8 8 8 8">
@@ -58,10 +73,18 @@ export function StudyCycle() {
                     {[...listaRevisaoEstudos].map((review, i) =>
                         <CardReview
                             key={i}
+                            handleRegistrarEstudo={(studyRecord: any) => {
+                                setSelectedStudyRecord(studyRecord)
+                                setOpenStudyRecordForm(true);
+                            }}
                             review={review} />)}
                     {[...listaCicloEstudos].map((cycle, i) =>
                         <CardCycle
                             key={i}
+                            handleRegistrarEstudo={(studyRecord: any) => {
+                                setSelectedStudyRecord(studyRecord)
+                                setOpenStudyRecordForm(true);
+                            }}
                             handleEditarCiclo={(ciclo: ICycle) => {
                                 setSelectedCycle(ciclo)
                                 setOpenCycleForm(true)

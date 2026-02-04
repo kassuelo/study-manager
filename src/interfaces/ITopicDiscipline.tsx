@@ -9,5 +9,6 @@ export interface ITopicDiscipline {
   annotation?: string
   elapsedTime?: string
   score?: string
+  subject?: string
 }
 

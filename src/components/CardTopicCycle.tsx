@@ -5,24 +5,24 @@ import { PageButton } from './PageButton'
 import { Row } from './Row'
 import { useState } from 'react'
 import type { ITopicCycle } from '../interfaces/ITopicCycle'
+import { ButtonStudyRecord } from './ButtorStudyRecord'
 
 
 type CardTopicProps = {
+    handleRegistrarEstudo: Function
     topic: ITopicCycle
 }
 
 export function CardTopicCycle(props: CardTopicProps) {
-    const [expand, setExpand] = useState(false)
+    const [expand, setExpand] = useState(true)
     return <Card style={{ background: props.topic.rgb, color: '#FFF' }}
         styles={{
-            body: {
-                padding: 10,
-            },
+            body: { padding: 10 }
         }}
     >
         <Row>
             <Grid cols="8 8 8 8">
-                <h6>{props.topic.description}</h6>
+                <ButtonStudyRecord handleRegistrarEstudo={props.handleRegistrarEstudo} topic={props.topic} />
             </Grid>
             <Grid cols="4 4 4 4" style={{ textAlign: 'right' }}>
                 {props.topic.elapsedTime}
@@ -76,5 +76,5 @@ export function CardTopicCycle(props: CardTopicProps) {
                 </>}
 
         </Row>
-    </Card>
+    </Card >
 }

@@ -1,4 +1,4 @@
-import type { ITopicForm } from "./ITopicDiscipline";
+import type { ITopicDiscipline } from "./ITopicDiscipline";
 
 export interface IDiscipline {
     id?: number,
@@ -6,5 +6,5 @@ export interface IDiscipline {
     description: string,
     statusInfo: string,
     annotation: string | null,
-    topics: ITopicForm[]
+    topics: ITopicDiscipline[]
 }

@@ -17,7 +17,7 @@ export function useStudyMap() {
     useEffect(() => {
         async function buscarDados() {
             try {
-                const response = await fetch(`${BASE_URL}/mock-api/study-map`);
+                const response = await fetch(`${BASE_URL}/study-map`);
                 const data: StudyCycleResponse = await response.json();
                 console.log(data)
                 setListaMapaEstudos(data.subjects);
