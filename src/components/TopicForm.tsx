@@ -20,7 +20,7 @@ const INCIDENCE_COLORS = [
 ]
 
 const DEFAULT_TOPIC = {
-    rgb: INCIDENCE_COLORS[0],
+    color: INCIDENCE_COLORS[0],
     description: '',
     incidenceScore: 0,
     knowledgeScore: 0,
@@ -52,17 +52,22 @@ export function TopicForm({ selectedTopic, onSubmit, onCancel }: TopicFormProps)
     const incidenceScore = Form.useWatch('incidenceScore', form)
 
     useEffect(() => {
+        form.resetFields()
+
         if (selectedTopic) {
-            form.setFieldsValue(selectedTopic)
+            form.setFieldsValue({
+                ...DEFAULT_TOPIC,
+                ...selectedTopic,
+            })
         } else {
             form.setFieldsValue(DEFAULT_TOPIC)
         }
-    }, [selectedTopic, form])
+    }, [selectedTopic])
 
 
     useEffect(() => {
         if (typeof incidenceScore === 'number') {
-            form.setFieldValue('rgb', INCIDENCE_COLORS[incidenceScore])
+            form.setFieldValue('color', INCIDENCE_COLORS[incidenceScore])
         }
     }, [incidenceScore])
 
@@ -89,7 +94,7 @@ export function TopicForm({ selectedTopic, onSubmit, onCancel }: TopicFormProps)
             </Form.Item>
 
             {/* INCIDÊNCIA */}
-            <Form.Item name="rgb" hidden>
+            <Form.Item name="color" hidden>
                 <Input />
             </Form.Item>
 

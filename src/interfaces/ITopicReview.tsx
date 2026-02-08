@@ -8,7 +8,7 @@ interface IHistoryReview {
 export interface ITopicReview {
   id?: number
   order: number
-  rgb: string
+  color: string
   description: string
   elapsedTime: string
   score: string

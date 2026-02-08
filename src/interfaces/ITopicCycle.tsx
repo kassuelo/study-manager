@@ -2,10 +2,11 @@
 export interface ITopicCycle {
   id?: number
   order?: number
-  rgb: string
+  color: string
   description: string
   elapsedTime: string
   score: string
-  subject: string
   annotation: string
+  idSubject?: number
+  idTopic?: number
 }

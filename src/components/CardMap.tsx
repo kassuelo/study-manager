@@ -12,7 +12,7 @@ interface IHitoryCycle {
 interface ITopicMap {
     "id": number,
     "order": number,
-    "rgb": string,
+    "color": string,
     "description": string,
     "elapsedTime": string,
     "score": string,
@@ -44,7 +44,7 @@ export function CardMap(props: CardMapProps) {
             </Grid>
             <Grid cols="12 12 12 12" >
                 {props.studyMap.topics.map(item =>
-                    <Card style={{ background: item.rgb, color: '#FFF' }}
+                    <Card style={{ background: item.color, color: '#FFF' }}
                         styles={{
                             body: {
                                 padding: 10,

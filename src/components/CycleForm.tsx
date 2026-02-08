@@ -45,7 +45,7 @@ export function CycleForm(props: CycleFormProps) {
         // Preenche os tópicos
         const listaTopicosRecebida = props.selectedCycle.topics || []
         setTopics(listaTopicosRecebida)
-        const disciplinasValidas = listaMapaEstudos.filter(discipline => listaTopicosRecebida.find(t => t.subject === discipline.description))
+        const disciplinasValidas = listaMapaEstudos.filter(discipline => listaTopicosRecebida.find(t => t.id === discipline.id))
         const disciplinasComTopicosFiltrados = disciplinasValidas.map(discipline => ({ ...discipline, topics: discipline.topics.filter(dt => listaTopicosRecebida.find(t => t.description === dt.description)) }))
         setDisciplines(disciplinasComTopicosFiltrados)
 
@@ -58,7 +58,8 @@ export function CycleForm(props: CycleFormProps) {
 
                 const mappedTopics: ITopicDiscipline[] = topics.map(t => ({
                     ...t,
-                    subject: current.description,
+                    idSubject: current.id,
+                    idTopic: t.id
                 }))
 
                 return [...acc, ...mappedTopics]
@@ -93,6 +94,10 @@ export function CycleForm(props: CycleFormProps) {
         const payload = {
             ...values,
             topics,
+        }
+
+        if (props.selectedCycle?.id) {
+            payload.id = props.selectedCycle.id
         }
 
         console.log('OBJETO CICLO RESULTANTE:', payload)
@@ -189,7 +194,7 @@ export function CycleForm(props: CycleFormProps) {
                                         {disciplina.statusInfo}
                                     </Grid>
                                     {disciplina.topics.map((topico, j) =>
-                                        <Card key={j} style={{ background: topico.rgb, color: '#FFF' }}
+                                        <Card key={j} style={{ background: topico.color, color: '#FFF' }}
                                             styles={{
                                                 body: {
                                                     padding: 10,

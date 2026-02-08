@@ -20,6 +20,15 @@ type DisciplineFormProps = {
     onCancel: MouseEventHandler<HTMLButtonElement>
 }
 
+const DEFAULT_TOPIC = {
+    description: '',
+    incidenceScore: 0,
+    knowledgeScore: 0,
+    reviewIntervals: [1],
+    annotation: '',
+}
+
+
 export function DisciplineForm(props: DisciplineFormProps) {
     const [showTopicForm, setShowTopicForm] = useState(false)
     const [selectedTopic, setSelectedTopic] = useState<ITopicDiscipline | null>(null)
@@ -27,19 +36,32 @@ export function DisciplineForm(props: DisciplineFormProps) {
     const [topics, setTopics] = useState<ITopicDiscipline[]>([])
 
     useEffect(() => {
-        console.log(props.selectedDiscipline)
-        if (!props.selectedDiscipline) return
+        // Modo cadastro (sem disciplina selecionada)
+        if (!props.selectedDiscipline) {
+            form.resetFields();        // limpa formulário
+            setTopics([]);             // limpa tópicos
+            setSelectedTopic(null);    // limpa tópico selecionado
+            return;
+        }
 
-        // Preenche os campos do formulário
+        // Modo edição
         form.setFieldsValue({
             description: props.selectedDiscipline.description,
             annotation: props.selectedDiscipline.annotation,
-        })
+        });
 
-        // Preenche os tópicos
-        setTopics(props.selectedDiscipline.topics || [])
+        setTopics(
+            props.selectedDiscipline.topics.map(topic => ({
+                description: topic.description ?? DEFAULT_TOPIC.description,
+                incidenceScore: topic.incidenceScore ?? DEFAULT_TOPIC.incidenceScore,
+                knowledgeScore: topic.knowledgeScore ?? DEFAULT_TOPIC.knowledgeScore,
+                reviewIntervals: topic.reviewIntervals ?? DEFAULT_TOPIC.reviewIntervals,
+                annotation: topic.annotation ?? DEFAULT_TOPIC.annotation,
+            }))
+        );
 
-    }, [props.selectedDiscipline, form])
+    }, [props.selectedDiscipline, form]);
+
 
 
     const handleAddTopic = (topic: ITopicDiscipline) => {
@@ -62,13 +84,12 @@ export function DisciplineForm(props: DisciplineFormProps) {
 
     const handleSubmit = (values: any) => {
         const payload = {
+            id: props.selectedDiscipline?.id,
             ...values,
             topics,
         }
 
-        console.log('OBJETO DISCIPLINA RESULTANTE:', payload)
         props.onSubmit(payload)
-        setSelectedTopic(null)
     }
 
     return (

@@ -15,7 +15,7 @@ type CardTopicProps = {
 
 export function CardTopicReview(props: CardTopicProps) {
     const [expand, setExpand] = useState(true)
-    return <Card style={{ background: props.topic.rgb, color: '#FFF' }}
+    return <Card style={{ background: props.topic.color, color: '#FFF' }}
         styles={{
             body: {
                 padding: 10,

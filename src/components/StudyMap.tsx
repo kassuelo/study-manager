@@ -14,30 +14,31 @@ export function StudyMap() {
     const [openForm, setOpenForm] = useState(false)
     const [selectedDiscipline, setSelectedDiscipline] = useState<IDiscipline | null>(null)
     const { listaMapaEstudos, adicionarDisciplina, editarDisciplina, excluirDisciplina } = useStudyMap()
+
+    function handleCancelForm() {
+        setOpenForm(false);
+        setSelectedDiscipline(null)
+    }
     return (
         <>
             {/* Modal do formulário */}
             <Modal
-                title={selectedDiscipline ? "Editar Disciplina": "Nova Disciplina"}
+                title={selectedDiscipline ? "Editar Disciplina" : "Nova Disciplina"}
                 open={openForm}
-                onCancel={() => {
-                    setOpenForm(false);
-                    setSelectedDiscipline(null)
-                }}
+                onCancel={handleCancelForm}
                 footer={null} // deixa os botões dentro do form
                 destroyOnHidden
                 width={'min(800px,80vw)'}
             >
                 <DisciplineForm
                     selectedDiscipline={selectedDiscipline}
-                    onCancel={() => setOpenForm(false)}
+                    onCancel={handleCancelForm}
                     onSubmit={(disciplina: IDiscipline) => {
                         if (selectedDiscipline) {
-                            editarDisciplina({ oldDiscipline: selectedDiscipline, newDiscipline: disciplina })
+                            editarDisciplina({ disciplina, callback: handleCancelForm })
                         } else {
-                            adicionarDisciplina(disciplina)
+                            adicionarDisciplina({ disciplina, callback: handleCancelForm })
                         }
-                        setOpenForm(false)
                     }
                     } />
             </Modal>
@@ -53,10 +54,9 @@ export function StudyMap() {
             </Card>
             <Card style={{ boxShadow: '0px 0px 3px 1px #DDF', background: '#ebedf5', margin: 0, padding: 0 }}>
                 <Row>
-                    <Grid cols="12 12 12 12" style={{ maxHeight: window.innerWidth < 768 ? 300: '70vh', overflowY: 'auto' }}>
-                        {listaMapaEstudos.map((item, i) =>
-                            <Card key={i} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
-                            >
+                    <Grid cols="12 12 12 12" style={{ maxHeight: window.innerWidth < 768 ? 300 : '70vh', overflowY: 'auto' }}>
+                        {listaMapaEstudos.map((item) =>
+                            <Card key={item.id} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}>
                                 <Row>
                                     <Grid cols="8 8 8 8">
                                         <h5>{item.description}</h5>
@@ -71,7 +71,7 @@ export function StudyMap() {
                                         <PageButton type="primary" danger
                                             onClick={() => {
                                                 if (!window.confirm('Deseja realmente excluir a disciplina?')) return;
-                                                excluirDisciplina(item)
+                                                excluirDisciplina(item.id)
                                             }} icon="trash" text="" />
                                     </Grid>
                                 </Row>
@@ -84,7 +84,7 @@ export function StudyMap() {
                                     </Grid>
                                     <Grid cols="12 12 12 12" >
                                         {item.topics.map((item, j) =>
-                                            <Card key={j} style={{ background: item.rgb, color: '#FFF' }}
+                                            <Card key={j} style={{ background: item.color, color: '#FFF' }}
                                                 styles={{
                                                     body: {
                                                         padding: 10,

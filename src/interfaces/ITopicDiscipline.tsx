@@ -1,14 +1,12 @@
 export interface ITopicDiscipline {
   id?: number
   order?: number
-  rgb: string,
+  color?: string,
   description: string
-  incidenceScore?: number
+  elapsedTime?: string
   knowledgeScore?: number
+  incidenceScore?: number
   reviewIntervals?: number[]
   annotation?: string
-  elapsedTime?: string
   score?: string
-  subject?: string
 }
-

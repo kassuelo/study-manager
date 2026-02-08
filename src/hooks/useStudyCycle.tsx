@@ -1,79 +1,77 @@
 import { useEffect, useState } from "react";
 import type { IReview } from "../interfaces/IReview";
 import type { ICycle } from "../interfaces/ICycle";
-import { BASE_URL } from "../config/config";
+import { createCycle, deleteCycle, getStudyCycle, updateCycle } from "../services/studyCycleService ";
+import { toast } from "react-toastify";
 
-interface StudyCycleResponse {
-    reviews: IReview[];
-    cycles: ICycle[];
-}
-
-type EditarReviewParams = {
-    oldReview: IReview
-    newReview: IReview
-}
-
-type EditarCycleParams = {
-    oldCycle: ICycle
-    newCycle: ICycle
-}
 
 export function useStudyCycle() {
     const [listaRevisaoEstudos, setListaRevisaoEstudos] = useState<IReview[]>([]);
     const [listaCicloEstudos, setListaCicloEstudos] = useState<ICycle[]>([]);
 
-    useEffect(() => {
-        async function buscarDados() {
-            try {
-                const response = await fetch(`${BASE_URL}/study-cycle`);
-                const data: StudyCycleResponse = await response.json();
-                console.log(data)
-                setListaRevisaoEstudos(data.reviews);
-                setListaCicloEstudos(data.cycles);
-            } catch (error) {
-                console.error("Erro ao buscar ciclo de estudos:", error);
-            }
+    async function buscarDados() {
+        try {
+            const { cycles, reviews } = await getStudyCycle();
+            setListaRevisaoEstudos(reviews)
+            setListaCicloEstudos(cycles);
+        } catch (err: any) {
+            console.error(err);
+            toast.error("Erro ao buscar ciclo");
         }
+    }
 
+    useEffect(() => {
         buscarDados();
     }, []);
 
-    function adicionarCiclo(ciclo: ICycle) {
-        setListaCicloEstudos(prev => [...prev, ciclo]);
-    }
 
-    function excluirCiclo(ciclo: ICycle) {
-        setListaCicloEstudos(prev => [...prev.filter(d => JSON.stringify(d) !== JSON.stringify(ciclo))])
-    }
+    async function adicionarCiclo(ciclo: ICycle) {
+        try {
+            await createCycle(ciclo)
+            buscarDados();
+            toast.success("Ciclo cadastrada com sucesso!");
 
-    function editarCiclo({ oldCycle, newCycle }: EditarCycleParams) {
-        excluirCiclo(oldCycle)
-        adicionarCiclo(newCycle)
-    }
+        } catch (error) {
+            console.error(error)
+            toast.error("Erro ao cadastrar ciclo");
 
+        }
 
-    function adicionarRevisao(revisao: IReview) {
-        setListaRevisaoEstudos(prev => [...prev, revisao]);
-    }
-
-    function excluirRevisao(revisao: IReview) {
-        setListaRevisaoEstudos(prev => [...prev.filter(d => JSON.stringify(d) !== JSON.stringify(revisao))])
-    }
-
-    function editarRevisao({ oldReview, newReview }: EditarReviewParams) {
-        excluirRevisao(oldReview)
-        adicionarRevisao(newReview)
     }
 
 
+    async function editarCiclo(ciclo: ICycle) {
+        try {
+            await updateCycle(ciclo)
+            buscarDados();
+            toast.success("Ciclo alterada com sucesso!");
 
+        } catch (error) {
+            console.error(error)
+            toast.error("Erro ao alterar ciclo");
+
+        }
+
+    }
+
+    async function excluirCiclo(id: number | undefined) {
+        try {
+            if (!id) throw new TypeError("id inválido")
+            await deleteCycle(id)
+            buscarDados();
+            toast.success("Ciclo excluida com sucesso!");
+
+        } catch (error) {
+            console.error(error)
+            toast.error("Erro ao excluir ciclo");
+
+        }
+    }
 
     return {
         listaRevisaoEstudos,
         listaCicloEstudos,
         // adicionarRevisao esse é incluido pelo back
-        editarRevisao,
-        excluirRevisao,
         adicionarCiclo,
         excluirCiclo,
         editarCiclo
