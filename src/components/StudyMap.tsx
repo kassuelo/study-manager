@@ -21,27 +21,20 @@ export function StudyMap() {
     }
     return (
         <>
-            {/* Modal do formulário */}
-            <Modal
-                title={selectedDiscipline ? "Editar Disciplina" : "Nova Disciplina"}
-                open={openForm}
+
+            <DisciplineForm
+                visible={openForm}
+                selectedDiscipline={selectedDiscipline}
                 onCancel={handleCancelForm}
-                footer={null} // deixa os botões dentro do form
-                destroyOnHidden
-                width={'min(800px,80vw)'}
-            >
-                <DisciplineForm
-                    selectedDiscipline={selectedDiscipline}
-                    onCancel={handleCancelForm}
-                    onSubmit={(disciplina: IDiscipline) => {
-                        if (selectedDiscipline) {
-                            editarDisciplina({ disciplina, callback: handleCancelForm })
-                        } else {
-                            adicionarDisciplina({ disciplina, callback: handleCancelForm })
-                        }
+                onSubmit={(disciplina: IDiscipline) => {
+                    if (selectedDiscipline) {
+                        editarDisciplina({ disciplina, callback: handleCancelForm })
+                    } else {
+                        adicionarDisciplina({ disciplina, callback: handleCancelForm })
                     }
-                    } />
-            </Modal>
+                }
+                } />
+
             <Card className='pe-3 mb-2' style={{ color: '#FFF', fontWeight: 'bold', background: '#02d48a' }}>
                 <Row>
                     <Grid cols="8 8 8 8">
@@ -83,8 +76,8 @@ export function StudyMap() {
                                         {item.statusInfo}
                                     </Grid>
                                     <Grid cols="12 12 12 12" >
-                                        {item.topics.map((item, j) =>
-                                            <Card key={j} style={{ background: item.color, color: '#FFF' }}
+                                        {item.topics.map((item) =>
+                                            <Card key={item.id} style={{ background: item.color, color: '#FFF' }}
                                                 styles={{
                                                     body: {
                                                         padding: 10,

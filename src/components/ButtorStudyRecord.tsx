@@ -1,9 +1,11 @@
+import type { ICycle } from "../interfaces/ICycle"
 import type { ITopicCycle } from "../interfaces/ITopicCycle"
 import type { ITopicReview } from "../interfaces/ITopicReview"
 import { PageButton } from "./PageButton"
 
 type ButtonStudyRecordProps = {
     handleRegistrarEstudo: Function
+    cycle: ICycle
     topic: ITopicCycle | ITopicReview
 }
 
@@ -14,6 +16,8 @@ export function ButtonStudyRecord(props: ButtonStudyRecordProps) {
                 style={{ color: '#FFF' }}
                 onClick={() => {
                     props.handleRegistrarEstudo({
+                        cycleId:props.cycle.id,
+                        topicId:props.topic.id,
                         disciplineDescription: props.topic.subject,
                         topicDescription: props.topic.description
                     })

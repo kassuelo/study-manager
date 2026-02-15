@@ -6,7 +6,6 @@ export interface ITopicCycle {
   description: string
   elapsedTime: string
   score: string
+  subject?: string
   annotation: string
-  idSubject?: number
-  idTopic?: number
 }

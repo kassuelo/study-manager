@@ -1,4 +1,4 @@
-import { Card, Modal } from 'antd'
+import { Card } from 'antd'
 import { Grid } from '../components/Grid'
 import { PageButton } from '../components/PageButton'
 import { Row } from '../components/Row'
@@ -9,13 +9,18 @@ import { useState } from 'react';
 import type { ICycle } from '../interfaces/ICycle';
 import { CycleForm } from './CycleForm';
 import { StudyRecordForm } from './StudyRecordForm';
+import type { IStudyRecord } from '../interfaces/IStudyRecord';
+import type { IReviewRecord } from '../interfaces/IReviewRecord';
+import { ReviewRecordForm } from './ReviewRecordForm';
 
 export function StudyCycle() {
     const [openCycleForm, setOpenCycleForm] = useState(false)
+    const [openReviewRecordForm, setOpenReviewRecordForm] = useState(false)
     const [openStudyRecordForm, setOpenStudyRecordForm] = useState(false)
     const [selectedCycle, setSelectedCycle] = useState<ICycle | null>(null)
     const [selectedStudyRecord, setSelectedStudyRecord] = useState<any | null>(null)
-    const { listaRevisaoEstudos, listaCicloEstudos, editarRevisao, excluirRevisao, adicionarCiclo, excluirCiclo, editarCiclo } = useStudyCycle();
+    const [selectedReviewRecord, setSelectedReviewRecord] = useState<any | null>(null)
+    const { listaRevisaoEstudos, listaCicloEstudos, adicionarRegistroEstudo, adicionarCiclo, excluirCiclo, editarCiclo } = useStudyCycle();
 
 
     function handleCancelCycleForm() {
@@ -25,7 +30,7 @@ export function StudyCycle() {
 
     function handleSubmitCycleForm(ciclo: ICycle) {
         if (selectedCycle) {
-            editarCiclo({ oldCycle: selectedCycle, newCycle: ciclo })
+            editarCiclo(ciclo);
         } else {
             adicionarCiclo(ciclo)
         }
@@ -39,7 +44,7 @@ export function StudyCycle() {
     }
 
     function handleSubmitStudyRecordForm(studyRecord: any) {
-        window.alert(`ADICIONANDO REGISTRO DE ESTUDO\n ${JSON.stringify(studyRecord, null, 4)}\n \n deveria estar vindo o id_subject e id_topic pra poder enviar, vinculando o registro de estudo a disciplina e tópico`)
+        adicionarRegistroEstudo(studyRecord)
         setOpenStudyRecordForm(false)
         setSelectedStudyRecord(null)
     }
@@ -50,6 +55,12 @@ export function StudyCycle() {
             selectedCycle={selectedCycle}
             onCancel={handleCancelCycleForm}
             onSubmit={handleSubmitCycleForm}
+        />
+        <ReviewRecordForm
+            visible={openStudyRecordForm}
+            selectedReviewRecord={selectedReviewRecord}
+            onCancel={handleCancelStudyRecordForm}
+            onSubmit={handleSubmitStudyRecordForm}
         />
         <StudyRecordForm
             visible={openStudyRecordForm}
@@ -73,25 +84,26 @@ export function StudyCycle() {
                     {[...listaRevisaoEstudos].map((review, i) =>
                         <CardReview
                             key={i}
-                            handleRegistrarEstudo={(studyRecord: any) => {
-                                setSelectedStudyRecord(studyRecord)
-                                setOpenStudyRecordForm(true);
+                            handleRegistrarEstudo={(reviewRecord: IReviewRecord) => {
+                                setSelectedReviewRecord(reviewRecord)
+                                setOpenReviewRecordForm(true);
                             }}
                             review={review} />)}
                     {[...listaCicloEstudos].map((cycle, i) =>
                         <CardCycle
                             key={i}
-                            handleRegistrarEstudo={(studyRecord: any) => {
+                            handleRegistrarEstudo={(studyRecord: IStudyRecord) => {
                                 setSelectedStudyRecord(studyRecord)
                                 setOpenStudyRecordForm(true);
+
                             }}
                             handleEditarCiclo={(ciclo: ICycle) => {
                                 setSelectedCycle(ciclo)
                                 setOpenCycleForm(true)
                             }}
-                            handleExcluirCiclo={(ciclo: ICycle) => {
+                            handleExcluirCiclo={(id: number) => {
                                 if (!window.confirm('Deseja realmente excluir o ciclo?')) return;
-                                excluirCiclo(ciclo)
+                                excluirCiclo(id)
                             }}
                             cycle={cycle}
                         />)}

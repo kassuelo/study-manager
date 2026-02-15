@@ -36,7 +36,6 @@ export async function createDiscipline(data: IDiscipline) {
         throw new Error(errorText || "Erro ao cadastrar disciplina");
     }
 
-    return response.json();
 }
 
 export async function updateDiscipline(data: IDiscipline) {
@@ -58,7 +57,6 @@ export async function updateDiscipline(data: IDiscipline) {
         throw new Error(errorText || "Erro ao cadastrar disciplina");
     }
 
-    return response.json();
 }
 
 // Deletar disciplina por ID

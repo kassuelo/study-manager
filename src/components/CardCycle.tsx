@@ -31,7 +31,7 @@ export function CardCycle(props: CardCycleProps) {
                     />
                     <PageButton type="primary" danger
                         onClick={() => {
-                            props.handleExcluirCiclo(props.cycle)
+                            props.handleExcluirCiclo(props.cycle.id)
                         }}
                         icon="trash"
                         text=""
@@ -41,7 +41,7 @@ export function CardCycle(props: CardCycleProps) {
                     {props.cycle.statusInfo}
                 </Grid>
                 <Grid cols="12 12 12 12" >
-                    {props.cycle.topics.map((topic, i) => <CardTopicCycle key={i} topic={topic} handleRegistrarEstudo={props.handleRegistrarEstudo} />
+                    {props.cycle.topics.map((topic) => <CardTopicCycle key={topic.id} cycle={props.cycle} topic={topic} handleRegistrarEstudo={props.handleRegistrarEstudo} />
                     )}
                 </Grid>
             </Row>

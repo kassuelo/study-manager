@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import type { IReview } from "../interfaces/IReview";
 import type { ICycle } from "../interfaces/ICycle";
-import { createCycle, deleteCycle, getStudyCycle, updateCycle } from "../services/studyCycleService ";
+import { createCycle, createReviewRecord, createStudyRecord, deleteCycle, getStudyCycle, updateCycle } from "../services/studyCycleService ";
 import { toast } from "react-toastify";
+import type { IStudyRecord } from "../interfaces/IStudyRecord";
+import type { IReviewRecord } from "../interfaces/IReviewRecord";
 
 
 export function useStudyCycle() {
@@ -16,7 +18,7 @@ export function useStudyCycle() {
             setListaCicloEstudos(cycles);
         } catch (err: any) {
             console.error(err);
-            toast.error("Erro ao buscar ciclo");
+            toast.error("Erro ao buscar ciclos");
         }
     }
 
@@ -39,12 +41,40 @@ export function useStudyCycle() {
 
     }
 
+    async function adicionarRegistroEstudo(studyRecord: IStudyRecord) {
+        try {
+            await createStudyRecord(studyRecord)
+            buscarDados();
+            toast.success("Registro de estudo cadastrado com sucesso!");
+
+        } catch (error) {
+            console.error(error)
+            toast.error("Erro ao cadastrar registro de estudo");
+
+        }
+
+    }
+
+    async function adicionarRegistroRevisao(studyRecord: IReviewRecord) {
+        try {
+            await createReviewRecord(studyRecord)
+            buscarDados();
+            toast.success("Registro de estudo cadastrado com sucesso!");
+
+        } catch (error) {
+            console.error(error)
+            toast.error("Erro ao cadastrar registro de estudo");
+
+        }
+
+    }
+
 
     async function editarCiclo(ciclo: ICycle) {
         try {
             await updateCycle(ciclo)
             buscarDados();
-            toast.success("Ciclo alterada com sucesso!");
+            toast.success("Ciclo alterado com sucesso!");
 
         } catch (error) {
             console.error(error)
@@ -59,7 +89,7 @@ export function useStudyCycle() {
             if (!id) throw new TypeError("id inválido")
             await deleteCycle(id)
             buscarDados();
-            toast.success("Ciclo excluida com sucesso!");
+            toast.success("Ciclo excluido com sucesso!");
 
         } catch (error) {
             console.error(error)
@@ -72,6 +102,7 @@ export function useStudyCycle() {
         listaRevisaoEstudos,
         listaCicloEstudos,
         // adicionarRevisao esse é incluido pelo back
+        adicionarRegistroEstudo,
         adicionarCiclo,
         excluirCiclo,
         editarCiclo

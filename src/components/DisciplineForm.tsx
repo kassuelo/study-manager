@@ -1,4 +1,4 @@
-import { Form, Input, Button, Card } from 'antd'
+import { Form, Input, Button, Card, Modal } from 'antd'
 import { useEffect, useState, type MouseEventHandler } from 'react'
 import { INCIDENCE_LABELS, KNOWLEDGE_LABELS, TopicForm } from './TopicForm'
 import type { ITopicDiscipline } from '../interfaces/ITopicDiscipline'
@@ -15,6 +15,7 @@ const DEFAULT_FORM = {
 }
 
 type DisciplineFormProps = {
+    visible: boolean
     selectedDiscipline: IDiscipline | null
     onSubmit: Function
     onCancel: MouseEventHandler<HTMLButtonElement>
@@ -30,6 +31,8 @@ const DEFAULT_TOPIC = {
 
 
 export function DisciplineForm(props: DisciplineFormProps) {
+    if (!props.visible) return null;
+
     const [showTopicForm, setShowTopicForm] = useState(false)
     const [selectedTopic, setSelectedTopic] = useState<ITopicDiscipline | null>(null)
     const [form] = Form.useForm()
@@ -52,6 +55,7 @@ export function DisciplineForm(props: DisciplineFormProps) {
 
         setTopics(
             props.selectedDiscipline.topics.map(topic => ({
+                id: topic.id,
                 description: topic.description ?? DEFAULT_TOPIC.description,
                 incidenceScore: topic.incidenceScore ?? DEFAULT_TOPIC.incidenceScore,
                 knowledgeScore: topic.knowledgeScore ?? DEFAULT_TOPIC.knowledgeScore,
@@ -93,7 +97,14 @@ export function DisciplineForm(props: DisciplineFormProps) {
     }
 
     return (
-        <>
+        <Modal
+            title={props.selectedDiscipline ? "Editar Disciplina" : "Nova Disciplina"}
+            open={props.visible}
+            onCancel={props.onCancel}
+            footer={null} // deixa os botões dentro do form
+            destroyOnHidden
+            width={'min(800px,80vw)'}
+        >
             {showTopicForm ?
                 <Card title="Adicionar tópico" style={{ marginBottom: 16 }}>
                     <TopicForm
@@ -171,6 +182,6 @@ export function DisciplineForm(props: DisciplineFormProps) {
                     </Form>
                 </Row>
             }
-        </>
+        </Modal>
     )
 }

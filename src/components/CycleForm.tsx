@@ -9,6 +9,7 @@ import type { ICycle } from '../interfaces/ICycle'
 import { useStudyMap } from '../hooks/useStudyMap'
 import type { IDiscipline } from '../interfaces/IDiscipline'
 import type { ITopicDiscipline } from '../interfaces/ITopicDiscipline'
+import { toast } from 'react-toastify'
 
 const DEFAULT_FORM = {
     description: '',
@@ -24,6 +25,7 @@ type CycleFormProps = {
 }
 
 export function CycleForm(props: CycleFormProps) {
+    if (!props.visible) return null;
     const { listaMapaEstudos } = useStudyMap()
     const [disciplines, setDisciplines] = useState<IDiscipline[]>([])
     const [selectedDisciplineId, setSelectedDisciplineId] = useState<number | null>(null)
@@ -45,8 +47,8 @@ export function CycleForm(props: CycleFormProps) {
         // Preenche os tópicos
         const listaTopicosRecebida = props.selectedCycle.topics || []
         setTopics(listaTopicosRecebida)
-        const disciplinasValidas = listaMapaEstudos.filter(discipline => listaTopicosRecebida.find(t => t.id === discipline.id))
-        const disciplinasComTopicosFiltrados = disciplinasValidas.map(discipline => ({ ...discipline, topics: discipline.topics.filter(dt => listaTopicosRecebida.find(t => t.description === dt.description)) }))
+        const disciplinasValidas = listaMapaEstudos.filter(discipline => listaTopicosRecebida.find(t => discipline.topics.find(td => td.id == t.id)))
+        const disciplinasComTopicosFiltrados = disciplinasValidas.map(discipline => ({ ...discipline, topics: discipline.topics.filter(dt => listaTopicosRecebida.find(t => t.id === dt.id)) }))
         setDisciplines(disciplinasComTopicosFiltrados)
 
     }, [props.selectedCycle, listaMapaEstudos, form])
@@ -55,14 +57,7 @@ export function CycleForm(props: CycleFormProps) {
         const novaListaTopicos = disciplines.reduce<ITopicDiscipline[]>(
             (acc, current) => {
                 const topics = current.topics ?? []
-
-                const mappedTopics: ITopicDiscipline[] = topics.map(t => ({
-                    ...t,
-                    idSubject: current.id,
-                    idTopic: t.id
-                }))
-
-                return [...acc, ...mappedTopics]
+                return [...acc, ...topics]
             },
             []
         )
@@ -91,10 +86,15 @@ export function CycleForm(props: CycleFormProps) {
 
     const handleSubmit = (values: any) => {
 
+        if (!topics.length) {
+            toast.error('Selecione algum tópico para salvar o ciclo')
+            return;
+        }
         const payload = {
             ...values,
             topics,
         }
+
 
         if (props.selectedCycle?.id) {
             payload.id = props.selectedCycle.id
@@ -155,7 +155,12 @@ export function CycleForm(props: CycleFormProps) {
                                     const discipline = listaMapaEstudos.find(d => d.id === id)
                                     if (!discipline) return
 
-                                    setDisciplines(prev => [...prev, discipline])
+                                    setDisciplines(prev => {
+                                        console.log({ prev })
+                                        console.log({ teste: prev.filter(d => d.id != discipline.id) })
+                                        return [...prev.filter(d => d.id != discipline.id), discipline]
+                                    }
+                                    )
 
                                     // LIMPA O SELECT
                                     setSelectedDisciplineId(null)
@@ -172,7 +177,7 @@ export function CycleForm(props: CycleFormProps) {
 
 
                         {disciplines.map((disciplina, i) =>
-                            <Card key={i} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
+                            <Card key={disciplina.id} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
                             >
                                 <Row>
                                     <Grid cols="8 8 8 8">
@@ -234,8 +239,8 @@ export function CycleForm(props: CycleFormProps) {
                                                                 onClick={() => {
                                                                     if (!window.confirm('Deseja realmente excluir o tópico?')) return;
                                                                     setDisciplines(prev => prev.map(d => {
-                                                                        if (JSON.stringify(d) !== JSON.stringify(disciplina)) return d;
-                                                                        const novaListaTopicos = d.topics.filter(t => JSON.stringify(t) !== JSON.stringify(topico));
+                                                                        if (d.id !== disciplina.id) return d;
+                                                                        const novaListaTopicos = d.topics.filter(t => t.id !== topico.id);
                                                                         return { ...d, topics: novaListaTopicos }
 
                                                                     }))

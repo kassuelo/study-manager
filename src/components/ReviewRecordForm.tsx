@@ -5,32 +5,28 @@ import { Grid } from './Grid'
 import { PageButton } from './PageButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from 'dayjs'
-import type { IStudyRecord } from '../interfaces/IStudyRecord'
+import type { IReviewRecord } from '../interfaces/IReviewRecord'
 
 const DEFAULT_FORM = {
-    cydleId: null,
     topicId: null,
     disciplineDescription: '',
     topicDescription: '',
-
     startedAt: dayjs(),
     minutes: null,
-
     questionsSolved: null,
     questionsIncorrected: null,
-
     isDone: false,
     annotation: '',
 }
 
-type selectedStudyRecordFormProps = {
-    selectedStudyRecord: IStudyRecord
+type selectedReviewRecordFormProps = {
+    selectedReviewRecord: IReviewRecord
     visible: boolean
     onSubmit: Function
     onCancel: MouseEventHandler<HTMLButtonElement>
 }
 
-export function StudyRecordForm(props: selectedStudyRecordFormProps) {
+export function ReviewRecordForm(props: selectedReviewRecordFormProps) {
     if (!props.visible) return null;
 
     const [form] = Form.useForm()
@@ -38,17 +34,11 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
     useEffect(() => {
         if (props.visible) {
             form.setFieldsValue({
-                disciplineDescription: props.selectedStudyRecord?.disciplineDescription,
-                topicDescription: props.selectedStudyRecord?.topicDescription,
+                disciplineDescription: props.selectedReviewRecord?.disciplineDescription,
+                topicDescription: props.selectedReviewRecord?.topicDescription,
             })
         }
-    },
-        [
-            props.visible,
-            props.selectedStudyRecord?.disciplineDescription,
-            props.selectedStudyRecord?.topicDescription,
-            form
-        ])
+    },[ props.visible, props.selectedReviewRecord?.disciplineDescription, props.selectedReviewRecord?.topicDescription, form])
 
     useEffect(() => {
         if (!props.visible) {
@@ -57,14 +47,13 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
     }, [props.visible, form])
 
     function handleSubmit(values: any) {
-        const payload: IStudyRecord = {
+        const payload: IReviewRecord = {
             ...values,
             startedAt: values.startedAt.format('YYYY-MM-DD'),
             minutes: Number(values.minutes),
             questionsSolved: Number(values.questionsSolved),
             questionsIncorrected: Number(values.questionsIncorrected),
-            cycleId: props.selectedStudyRecord?.cycleId,
-            topicId: props.selectedStudyRecord?.topicId,
+            topicId: props.selectedReviewRecord?.topicId,
         }
         // console.log(payload)
         props.onSubmit(payload)
@@ -149,9 +138,6 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
                         />
                     </Form.Item>
 
-
-
-
                     <Form.Item
                         label="Respostas incorretas"
                         name="questionsIncorrected"
@@ -165,11 +151,6 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
                             placeholder="Digite apenas números"
                         />
                     </Form.Item>
-
-
-
-
-
 
                     {/* Concluído */}
                     <Form.Item

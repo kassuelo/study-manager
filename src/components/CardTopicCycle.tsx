@@ -6,10 +6,12 @@ import { Row } from './Row'
 import { useState } from 'react'
 import type { ITopicCycle } from '../interfaces/ITopicCycle'
 import { ButtonStudyRecord } from './ButtorStudyRecord'
+import type { ICycle } from '../interfaces/ICycle'
 
 
 type CardTopicProps = {
     handleRegistrarEstudo: Function
+    cycle: ICycle
     topic: ITopicCycle
 }
 
@@ -22,7 +24,7 @@ export function CardTopicCycle(props: CardTopicProps) {
     >
         <Row>
             <Grid cols="8 8 8 8">
-                <ButtonStudyRecord handleRegistrarEstudo={props.handleRegistrarEstudo} topic={props.topic} />
+                <ButtonStudyRecord handleRegistrarEstudo={props.handleRegistrarEstudo} cycle={props.cycle} topic={props.topic} />
             </Grid>
             <Grid cols="4 4 4 4" style={{ textAlign: 'right' }}>
                 {props.topic.elapsedTime}
