@@ -5,11 +5,11 @@ import { PageButton } from './PageButton'
 import { Row } from './Row'
 import { useState } from 'react'
 import type { ITopicReview } from '../interfaces/ITopicReview'
-import { ButtonStudyRecord } from './ButtorStudyRecord'
+import { ButtonReviewRecord } from './ButtorReviewRecord'
 
 
 type CardTopicProps = {
-    handleRegistrarEstudo: Function
+    handleRegistrarRevisao: Function
     topic: ITopicReview
 }
 
@@ -24,7 +24,7 @@ export function CardTopicReview(props: CardTopicProps) {
     >
         <Row>
             <Grid cols="8 8 8 8">
-                <ButtonStudyRecord handleRegistrarEstudo={props.handleRegistrarEstudo} topic={props.topic} />
+                <ButtonReviewRecord handleRegistrarRevisao={props.handleRegistrarRevisao} topic={props.topic} />
             </Grid>
             <Grid cols="4 4 4 4" style={{ textAlign: 'right' }}>
                 {props.topic.elapsedTime}

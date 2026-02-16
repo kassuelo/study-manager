@@ -20,7 +20,7 @@ export function StudyCycle() {
     const [selectedCycle, setSelectedCycle] = useState<ICycle | null>(null)
     const [selectedStudyRecord, setSelectedStudyRecord] = useState<any | null>(null)
     const [selectedReviewRecord, setSelectedReviewRecord] = useState<any | null>(null)
-    const { listaRevisaoEstudos, listaCicloEstudos, adicionarRegistroEstudo, adicionarCiclo, excluirCiclo, editarCiclo } = useStudyCycle();
+    const { listaRevisaoEstudos, listaCicloEstudos, adicionarRegistroEstudo, adicionarRegistroRevisao, adicionarCiclo, excluirCiclo, editarCiclo } = useStudyCycle();
 
 
     function handleCancelCycleForm() {
@@ -49,6 +49,17 @@ export function StudyCycle() {
         setSelectedStudyRecord(null)
     }
 
+    function handleCancelReviewRecordForm() {
+        setOpenReviewRecordForm(false)
+        setSelectedReviewRecord(null)
+    }
+
+    function handleSubmitReviewRecordForm(reviewRecord: any) {
+        adicionarRegistroRevisao(reviewRecord)
+        setOpenReviewRecordForm(false)
+        setSelectedReviewRecord(null)
+    }
+
     return <>
         <CycleForm
             visible={openCycleForm}
@@ -57,10 +68,10 @@ export function StudyCycle() {
             onSubmit={handleSubmitCycleForm}
         />
         <ReviewRecordForm
-            visible={openStudyRecordForm}
+            visible={openReviewRecordForm}
             selectedReviewRecord={selectedReviewRecord}
-            onCancel={handleCancelStudyRecordForm}
-            onSubmit={handleSubmitStudyRecordForm}
+            onCancel={handleCancelReviewRecordForm}
+            onSubmit={handleSubmitReviewRecordForm}
         />
         <StudyRecordForm
             visible={openStudyRecordForm}
@@ -84,7 +95,7 @@ export function StudyCycle() {
                     {[...listaRevisaoEstudos].map((review, i) =>
                         <CardReview
                             key={i}
-                            handleRegistrarEstudo={(reviewRecord: IReviewRecord) => {
+                            handleRegistrarRevisao={(reviewRecord: IReviewRecord) => {
                                 setSelectedReviewRecord(reviewRecord)
                                 setOpenReviewRecordForm(true);
                             }}

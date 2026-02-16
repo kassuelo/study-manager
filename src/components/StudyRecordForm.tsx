@@ -149,9 +149,6 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
                         />
                     </Form.Item>
 
-
-
-
                     <Form.Item
                         label="Respostas incorretas"
                         name="questionsIncorrected"
@@ -165,10 +162,6 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
                             placeholder="Digite apenas números"
                         />
                     </Form.Item>
-
-
-
-
 
 
                     {/* Concluído */}
@@ -189,7 +182,6 @@ export function StudyRecordForm(props: selectedStudyRecordFormProps) {
                             placeholder="Observações sobre o estudo..."
                         />
                     </Form.Item>
-
 
                     <Row>
                         <Grid cols="6 6 6 6" >

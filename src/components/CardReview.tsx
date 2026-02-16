@@ -5,7 +5,7 @@ import type { IReview } from '../interfaces/IReview'
 import { CardTopicReview } from './CardTopicReview'
 
 type CardReviewProps = {
-    handleRegistrarEstudo: Function
+    handleRegistrarRevisao: Function
     review: IReview
 }
 
@@ -19,7 +19,7 @@ export function CardReview(props: CardReviewProps) {
                 {props.review.statusInfo}
             </Grid>
             <Grid cols="12 12 12 12" >
-                {props.review.topics.map((topic, i) => <CardTopicReview key={i} topic={topic}  handleRegistrarEstudo={props.handleRegistrarEstudo}/>)}
+                {props.review.topics.map((topic, i) => <CardTopicReview key={i} topic={topic}  handleRegistrarRevisao={props.handleRegistrarRevisao}/>)}
             </Grid>
         </Row>
     </Card>

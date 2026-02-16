@@ -176,14 +176,41 @@ export function CycleForm(props: CycleFormProps) {
                         </Form.Item>
 
 
-                        {disciplines.map((disciplina, i) =>
-                            <Card key={disciplina.id} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
+                        {disciplines.map((disciplina, i) => {
+                            const optionsTopic = listaMapaEstudos
+                                .filter(d => d.id == disciplina.id).reduce((acc, cur) => {
+                                    const listaTopicosRestantes = cur.topics.filter(t => !disciplina.topics.some(dt => dt.id === t.id));
+                                    acc.push(...listaTopicosRestantes);
+                                    return acc;
+                                }, [] as ITopicDiscipline[])
+
+                            return <Card key={disciplina.id} style={{ width: '100%', background: '#FFF', marginBottom: 10 }}
                             >
                                 <Row>
                                     <Grid cols="8 8 8 8">
                                         <h5>{disciplina.description}</h5>
                                     </Grid>
                                     <Grid cols="4 4 4 4" style={{ display: 'flex', justifyContent: 'flex-end', gap: 4, paddingBottom: 14 }}>
+                                        <Select
+                                            placeholder="Incluir Tópicos"
+                                            value={null}
+                                            onSelect={(id) => {
+                                                setDisciplines(prev =>
+                                                    prev.map(d => {
+                                                        if (d.id !== disciplina.id) return d;
+                                                        const novoTopico = optionsTopic.find(t => t.id === id);
+                                                        // Se não encontrou, não altera
+                                                        if (!novoTopico) return d;
+                                                        return { ...d, topics: [...d.topics, novoTopico] };
+                                                    })
+                                                );
+                                            }}
+                                            options={optionsTopic.map(d => ({
+                                                label: d.description,
+                                                value: d.id,
+                                            }))}
+                                            disabled={!optionsTopic.length}
+                                        />
                                         <PageButton type="primary" danger
                                             onClick={() => {
                                                 if (!window.confirm('Deseja realmente excluir a disciplina?')) return;
@@ -238,12 +265,17 @@ export function CycleForm(props: CycleFormProps) {
                                                             <PageButton type="primary" danger
                                                                 onClick={() => {
                                                                     if (!window.confirm('Deseja realmente excluir o tópico?')) return;
-                                                                    setDisciplines(prev => prev.map(d => {
-                                                                        if (d.id !== disciplina.id) return d;
-                                                                        const novaListaTopicos = d.topics.filter(t => t.id !== topico.id);
-                                                                        return { ...d, topics: novaListaTopicos }
+                                                                    setDisciplines(prev =>
+                                                                        prev
+                                                                            .map(d => {
+                                                                                if (d.id !== disciplina.id) return d;
 
-                                                                    }))
+                                                                                const novaListaTopicos = d.topics.filter(t => t.id !== topico.id);
+
+                                                                                return { ...d, topics: novaListaTopicos };
+                                                                            })
+                                                                            .filter(d => d.topics.length > 0)
+                                                                    );
                                                                 }} icon="trash" text="" />
                                                         </Row>
                                                     </Grid>
@@ -253,6 +285,7 @@ export function CycleForm(props: CycleFormProps) {
                                     )}
                                 </Row>
                             </Card>
+                        }
                         )}
 
 

@@ -61,7 +61,7 @@ export function ReviewRecordForm(props: selectedReviewRecordFormProps) {
 
     return (
         <Modal
-            title={"Incluir Registro de Estudos"}
+            title={"Incluir Registro de Revisão"}
             open={props.visible}
             onCancel={props.onCancel}
             footer={null} // deixa os botões dentro do form
@@ -175,7 +175,7 @@ export function ReviewRecordForm(props: selectedReviewRecordFormProps) {
                     <Row>
                         <Grid cols="6 6 6 6" >
                             <Button color="green" variant="solid" type="primary" icon={<FontAwesomeIcon icon={'check'} />} htmlType="submit" block>
-                                Salvar Registro de Estudo
+                                Salvar Registro de Revisão
                             </Button>
                         </Grid>
                         <Grid cols="6 6 6 6" >

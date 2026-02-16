@@ -55,9 +55,9 @@ export function useStudyCycle() {
 
     }
 
-    async function adicionarRegistroRevisao(studyRecord: IReviewRecord) {
+    async function adicionarRegistroRevisao(reviewRecord: IReviewRecord) {
         try {
-            await createReviewRecord(studyRecord)
+            await createReviewRecord(reviewRecord)
             buscarDados();
             toast.success("Registro de estudo cadastrado com sucesso!");
 
@@ -101,7 +101,7 @@ export function useStudyCycle() {
     return {
         listaRevisaoEstudos,
         listaCicloEstudos,
-        // adicionarRevisao esse é incluido pelo back
+        adicionarRegistroRevisao,
         adicionarRegistroEstudo,
         adicionarCiclo,
         excluirCiclo,
